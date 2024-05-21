@@ -1,3 +1,5 @@
+# syntax=docker/dockerfile:1
+
 FROM python:3.9.2-alpine
 
 # Upgrade pip
@@ -10,10 +12,12 @@ RUN apk add curl
 RUN adduser -D nonroot
 
 # Create necessary directories and set permissions
-RUN mkdir /home/app/ && chown -R nonroot:nonroot /home/app
-RUN mkdir -p /var/log/flask-app && touch /var/log/flask-app/flask-app.err.log && touch /var/log/flask-app/flask-app.out.log
+RUN mkdir /home/app/ && \
+    chown -R nonroot:nonroot /home/app
+RUN mkdir -p /var/log/flask-app && \
+    touch /var/log/flask-app/flask-app.err.log && \
+    touch /var/log/flask-app/flask-app.out.log
 RUN chown -R nonroot:nonroot /var/log/flask-app
-
 
 # Switch to the non-root user
 USER nonroot
@@ -21,7 +25,7 @@ USER nonroot
 # Set the working directory
 WORKDIR /home/app
 
-# copy all the files to the container
+# Copy all the files to the container
 COPY --chown=nonroot:nonroot . .
 
 # Set up a virtual environment
@@ -38,3 +42,14 @@ EXPOSE 8000
 
 # Set the entry point to run the Flask app
 CMD ["python", "app.py"]
+
+#FROM spark:3.5.1-scala2.12-java17-ubuntu
+#
+#USER root
+#
+#RUN set -ex; \
+#    apt-get update; \
+#    apt-get install -y python3 python3-pip; \
+#    rm -rf /var/lib/apt/lists/*
+#
+#USER spark
